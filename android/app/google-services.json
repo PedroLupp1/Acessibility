@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "162867333848",
+    "firebase_url": "https://portal-crob-default-rtdb.firebaseio.com",
+    "project_id": "portal-crob",
+    "storage_bucket": "portal-crob.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162867333848:android:299394880c8b970a2025ad",
+        "android_client_info": {
+          "package_name": "com.example.crob_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "162867333848-0i7rmpmh4kt31pjt6asj40jj5fd7a30o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAThKDbkThqULiceDcA76Ob14E8wVNmakQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "162867333848-0i7rmpmh4kt31pjt6asj40jj5fd7a30o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
