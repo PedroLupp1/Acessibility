@@ -5,7 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AuthService extends ChangeNotifier {
   final SupabaseClient _supabaseClient = SupabaseClient(
     'https://ojysjtnqtdiosnarcfxm.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwZ2htam5jY2J0a2tucW9rdnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTczODg2ODMsImV4cCI6MjAzMjk2NDY4M30.cAlDkP1f22TW0pffwpKFLCty-0DBcfCDaMKFhnY0wkI',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qeXNqdG5xdGRpb3NuYXJjZnhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTQ2MjU3MjksImV4cCI6MjAxMDIwMTcyOX0.pfELcLPTN0-OgrsCVcXQ27NfhHiH6SsS1aDxtwoHDSM',
     schema: 'public',
   );
 
