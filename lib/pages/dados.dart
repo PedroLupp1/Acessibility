@@ -1,6 +1,7 @@
 import 'package:crob_project/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_side_menu/flutter_side_menu.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config.dart' as config;
 import 'package:go_router/go_router.dart';
@@ -21,34 +22,24 @@ final supabase = SupabaseClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qeXNqdG5xdGRpb3NuYXJjZnhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTQ2MjU3MjksImV4cCI6MjAxMDIwMTcyOX0.pfELcLPTN0-OgrsCVcXQ27NfhHiH6SsS1aDxtwoHDSM',
 );
 
-Future<List<String>> getDadosCadastraisDoSupabase() async {
+List? dadosAluno;
+Future<void> getDadosCadastraisDoSupabase() async {
+  
+  final user = context.read<AuthService>().getUserUid();
   final response = await supabase
       .from('user')
-      .select()
-      .single()
+      .select('nome, email')
+      .eq('id', 'user')
       .execute();
-
-  /*if (response.error != null) {
-    throw Exception(
-      'Falha ao recuperar dados do Supabase: response.error.message,',
-    );
-  }*/
 
   final data = response.data;
   if (data == null) {
     throw Exception('Dados não encontrados no Supabase');
   }
-  final nome = data['nome'] as String;
-  final email = data['email'] as String;
-  final telefone = data['telefone'] as String;
-
-  final List<String> dados = [
-      nome,
-      email,
-      telefone
-    ]; 
-  final lista = dados;
-  return lista;
+  final responseData = response.data;
+  setState(() {
+    dadosAluno = responseData.toList();
+  });
   
 }
 
@@ -58,6 +49,9 @@ void _redirecionarParaTela(String rota) {
   GoRouter.of(context).pushReplacement(rota);
   }
 
+void _accessCampus(){
+    _redirecionarParaTela('/campus');
+  }
 
   void _back() {
   _redirecionarParaTela( "/dashboard");
@@ -81,21 +75,7 @@ void _redirecionarParaTela(String rota) {
         titleTextStyle:
             const TextStyle(color: config.Colors.primary1, fontSize: 24),
       ),
-     body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth > 600) {
-            return _buildDesktopLayout(); // Layout para versão desktop
-          } else {
-            return _buildMobileLayout(); // Layout para versão mobile
-          }
-        },
-      ));
-  }
-
-
-
-  Widget _buildDesktopLayout() {
-    return SingleChildScrollView(
+     body:SingleChildScrollView(
       child: Row(
           children: [
                SideMenu(
@@ -104,7 +84,7 @@ void _redirecionarParaTela(String rota) {
                   builder: (data) => SideMenuData(
                     header: Container(
                       margin: const EdgeInsets.only(top: 10, bottom: 20),
-                      child: Image.asset('images/logoCrob.png',
+                      child: Image.asset('images/logo-pim.png',
                       width: MediaQuery.of(context).size.width * 0.3,
                       height: MediaQuery.of(context).size.height * 0.2,
                       ),
@@ -139,7 +119,7 @@ void _redirecionarParaTela(String rota) {
                         hoverColor: config.Colors.primary3,
                         isSelected: false,
                         onTap: _accessDisciplina,
-                        title: 'Disciplinas',
+                        title: 'Suas Disciplinas',
                         icon: const Icon(Icons.book),
                       ),
                       SideMenuItemDataTile(
@@ -149,9 +129,9 @@ void _redirecionarParaTela(String rota) {
                         highlightSelectedColor: config.Colors.primary2,
                         hoverColor: config.Colors.primary3,
                         isSelected: false,
-                        onTap: () {},
-                        title: 'AO VIVO',
-                        icon: const Icon(Icons.live_tv),
+                        onTap: _accessCampus,
+                        title: 'Outros Campus',
+                        icon: const Icon(Icons.map),
                       ),
                      /* SideMenuItemDataTile(
                         isSelected: true,
@@ -173,107 +153,46 @@ void _redirecionarParaTela(String rota) {
                     ],
                   ),
                 ),
-                /* Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                            Container(
-                              margin: const EdgeInsets.all(10),
-                              width: MediaQuery.of(context).size.width * 0.255,
-                              child:
-                              SizedBox(
-                                height: 300,
-                              )
-                    )  ],
-                          ),
-                        ),*/
+                Expanded(
+                  child: Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(onPressed: getDadosCadastraisDoSupabase, child: Text('Mostrar Dados')),
+                            Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: 
+                                 dadosAluno != null
+                                    ? SingleChildScrollView(
+                                      child: DataTable(
+                                          columns: const [
+                                            DataColumn(label: Text('Nome')),
+                                            DataColumn(label: Text('Email')),
+                                          
+                                          ],
+                                          rows: dadosAluno?.map((item) {
+                                                return DataRow(
+                                                  cells: [
+                                                    DataCell(
+                                                        Text(item['nome'].toString())),
+                                                    DataCell(Text(
+                                                        item['email'].toString())),
+                                                  ],
+                                                );
+                                              })?.toList() ??
+                                              <DataRow>[],
+                                        ),
+                                    )
+                                    : const Text('No Data Found'),
+                              ),  ],
+                            ),
+                  ),
+                        ),
                       ],
                     ),
-                  );
+                  ));
   }
-        Widget _buildMobileLayout() {
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 80,
-                child: Center(
-                  child: Text("Dados Cadastrais",
-                      style:
-                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                ),
-              ),
-              const SizedBox(
-                width: 250,
-                height: 250,
-                child: Icon(
-                  size: 250.0,
-                  color: Color(0xffDD8328),
-                  Icons.account_box,
-                ),
-              ),
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Nome: ",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "RA: ",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "CPF: ",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Curso: ",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              SizedBox(
-                height: 60,
-                width: 300,
-                child: ElevatedButton(
-                    style: const ButtonStyle(
-                      backgroundColor:
-                          MaterialStatePropertyAll(config.Colors.primary1),
-                    ),
-                    onPressed: _back,
-                    child: const Text("Ok")),
-              ),
-            ],
-          ),
-        );
-        
+      
   
 }
-  }

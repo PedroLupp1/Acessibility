@@ -44,7 +44,7 @@ class _CadastroState extends State<Cadastro> {
 
   
   Future<void> singUp(String email, String senha, String nome, String local) async {
-    await authService.cadastrar(email, senha, nome, local);
+    await authService.cadastrar(email, senha, nome);
     _exit();
   }
 
@@ -62,7 +62,7 @@ class _CadastroState extends State<Cadastro> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.asset('images/logoCrobTransparente.png'),
+                    Image.asset('images/logo-pim.jpeg'),
                     TextFormField(
                       decoration: const InputDecoration(
                         hintText: "Email",
@@ -85,12 +85,12 @@ class _CadastroState extends State<Cadastro> {
                       ),
                       controller: nomeController,
                      ),
-                      TextFormField(
+                      /*TextFormField(
                       decoration: const InputDecoration(
                        hintText: "Cidade",
                       ),
                       controller: localController,
-                     ),
+                     ),*/
                     const SizedBox(
                       height: 20,
                     ),

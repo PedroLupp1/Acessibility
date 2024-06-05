@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-showSnackBar(
+showSnackBar(SnackBar snackBar, 
   {required BuildContext context, required String text, bool isError = true
   }
 ){

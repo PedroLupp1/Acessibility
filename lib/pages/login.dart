@@ -1,20 +1,27 @@
 import 'package:crob_project/main.dart';
+import 'package:crob_project/services/midia_service.dart';
 import 'package:flutter/material.dart';
 import 'package:crob_project/config.dart' as config;
 import 'package:form_validator/form_validator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:crob_project/services/auth_service.dart';
 
 
-class LoginCrob extends StatefulWidget {
-  LoginCrob({super.key});
+class LoginAcessibility extends StatefulWidget {
+  LoginAcessibility({super.key});
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   @override
-  State<LoginCrob> createState() => _LoginCrobState();
+  State<LoginAcessibility> createState() => _LoginAcessibilityState();
 }
 
-class _LoginCrobState extends State<LoginCrob> {
+class _LoginAcessibilityState extends State<LoginAcessibility> {
+    
+    final SupabaseClient _supabaseClient = SupabaseClient(
+    'https://ojysjtnqtdiosnarcfxm.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qeXNqdG5xdGRpb3NuYXJjZnhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTQ2MjU3MjksImV4cCI6MjAxMDIwMTcyOX0.pfELcLPTN0-OgrsCVcXQ27NfhHiH6SsS1aDxtwoHDSM',
+  );
 
   final _formKey = GlobalKey<FormState>();
 
@@ -36,19 +43,40 @@ class _LoginCrobState extends State<LoginCrob> {
   GoRouter.of(context).pushReplacement(rota);
   }
 
- Future<void> _fazerLogin(String email, String senha) async {
-  final authService = AuthService();
+
+
+Future<void> _fazerLogin(String email, String senha) async {
+  final authService = context.read<AuthService>();
 
   await authService.login(email, senha);
 
   final role = await authService.getUserRole();
+  authService.getUserUid();
   if (role == 'admin') {
     _redirecionarParaTela('/dashboardadm');
   } else if (role == 'user_comum') {
     _redirecionarParaTela('/dashboard');
+  } else if (role == 'ger'){
+    _redirecionarParaTela('/dashboardger');
   }
 }
 
+
+Future<String> getSenhaUser() async {
+  final response = await supabase
+      .from('user') 
+      .select('senha') 
+      .single()
+      .execute();
+
+  if (response.status == 200) {
+    final senha = response.data?[0]['senha'] as String;
+    return senha;
+  } else {
+   final errorMessage = response.data!.message;
+    throw Exception('Falha ao obter a senha do Supabase: $errorMessage');
+  }
+}
 
 
 
@@ -69,7 +97,7 @@ class _LoginCrobState extends State<LoginCrob> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset('images/logoCrobTransparente.png'),
+                      Image.asset('images/logo-pim.png'),
                       TextFormField(
                         validator: validator1,
                         decoration: const InputDecoration(
@@ -103,8 +131,8 @@ class _LoginCrobState extends State<LoginCrob> {
                               _fazerLogin(loginController.text, senhaController.text );
 
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text("Senha Incorreta!, (e)")),
+                                const SnackBar(
+                                  content: Text("Senha Incorreta!")),
                               );
                             },
                             child: const Text("Login",

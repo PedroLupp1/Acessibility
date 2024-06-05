@@ -8,14 +8,14 @@ import 'package:video_player/video_player.dart';
 import 'package:go_router/go_router.dart';
 import '../config.dart' as config;
 
-class Disciplinas extends StatefulWidget {
-  const Disciplinas({Key? key}) : super(key: key);
+class Campus extends StatefulWidget {
+  const Campus({Key? key}) : super(key: key);
 
   @override
-  State<Disciplinas> createState() => _DisciplinasState();
+  State<Campus> createState() => _CampusState();
 }
 
-class _DisciplinasState extends State<Disciplinas> {
+class _CampusState extends State<Campus> {
   final supabase = SupabaseClient(
     'https://ojysjtnqtdiosnarcfxm.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qeXNqdG5xdGRpb3NuYXJjZnhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTQ2MjU3MjksImV4cCI6MjAxMDIwMTcyOX0.pfELcLPTN0-OgrsCVcXQ27NfhHiH6SsS1aDxtwoHDSM',
@@ -82,6 +82,10 @@ class _DisciplinasState extends State<Disciplinas> {
     _redirecionarParaTela('/dados');
   }
 
+  void _accessCampus(){
+    _redirecionarParaTela('/campus');
+  }
+
   void _accessDisciplina() {
     _redirecionarParaTela('/disciplinas');
   }
@@ -100,9 +104,9 @@ class _DisciplinasState extends State<Disciplinas> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Disciplinas"),
+        title: const Text("Outro Campus"),
         backgroundColor: const Color(0xffd9d9d9),
-        titleTextStyle: const TextStyle(color: Color(0xff325CA9), fontSize: 24),
+        titleTextStyle: const TextStyle(color: Color.fromARGB(255, 231, 95, 4), fontSize: 24),
       ),
       body: FutureBuilder<String>(
           future: _calculation,
@@ -124,7 +128,7 @@ class _DisciplinasState extends State<Disciplinas> {
                       header: Container(
                         margin: const EdgeInsets.only(top: 10, bottom: 20),
                         child: Image.asset(
-                          'images/logoCrob.png',
+                          'images/logo-pim.png',
                           width: MediaQuery.of(context).size.width * 0.3,
                           height: MediaQuery.of(context).size.height * 0.2,
                         ),
@@ -168,10 +172,10 @@ class _DisciplinasState extends State<Disciplinas> {
                           highlightSelectedColor: config.Colors.primary2,
                           isSelected: true,
                           onTap: _accessDisciplina,
-                          title: 'Disciplinas',
+                          title: 'Suas Disciplinas',
                           icon: const Icon(Icons.book),
                         ),
-                        /*SideMenuItemDataTile(
+                        SideMenuItemDataTile(
                           margin: const EdgeInsetsDirectional.only(
                               top: 7, bottom: 7),
                           titleStyle:
@@ -181,10 +185,10 @@ class _DisciplinasState extends State<Disciplinas> {
                           highlightSelectedColor: config.Colors.primary2,
                           hoverColor: config.Colors.primary3,
                           isSelected: false,
-                          onTap: () {},
-                          title: 'AO VIVO',
-                          icon: const Icon(Icons.live_tv),
-                        ),*/
+                          onTap: _accessCampus,
+                          title: 'Outros Campus',
+                          icon: const Icon(Icons.map),
+                        ),
                         SideMenuItemDataTile(
                           margin: const EdgeInsetsDirectional.only(
                               top: 7, bottom: 7),
@@ -206,26 +210,32 @@ class _DisciplinasState extends State<Disciplinas> {
   child: SingleChildScrollView(
     child: Padding(
       padding: const EdgeInsets.only(right: 50, left: 50),
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: turmas.length,
-        itemBuilder: (context, index) {
-          final turma = turmas[index];
-          return SizedBox(
+      child: Column(
+        children: [
+          SizedBox(
             width: 200, // Defina a largura desejada para os botões
             child: ElevatedButton(
-              style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(config.Colors.primary1),
-                textStyle: MaterialStatePropertyAll(TextStyle(
-                  color: config.Colors.primary2,
-                )),
+              style: ElevatedButton.styleFrom(
+                primary: config.Colors.primary1,
+                onPrimary: config.Colors.primary2,
               ),
               onPressed: _accessPlayer,
-              child: Text(turma['nome'].toString()),
+              child: Text('Campus Barcelona'), // Texto personalizável
             ),
-          );
-        },
+          ),
+          const SizedBox(height: 10), // Espaçamento entre os botões
+          SizedBox(
+            width: 200, // Defina a largura desejada para os botões
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: config.Colors.primary1,
+                onPrimary: config.Colors.primary2,
+              ),
+              onPressed: _accessPlayer,
+              child: Text('Campus Centro'), // Texto personalizável
+            ),
+          ),
+        ],
       ),
     ),
   ),

@@ -1,9 +1,9 @@
 import 'package:crob_project/routes.dart';
 import 'package:crob_project/services/auth_service.dart';
-import 'package:crob_project/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,11 +11,11 @@ void main() async {
     url: 'https://ojysjtnqtdiosnarcfxm.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qeXNqdG5xdGRpb3NuYXJjZnhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTQ2MjU3MjksImV4cCI6MjAxMDIwMTcyOX0.pfELcLPTN0-OgrsCVcXQ27NfhHiH6SsS1aDxtwoHDSM',
   );
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthService()),
-        ChangeNotifierProvider(create: (context) => UserState()), // Adicione este provedor
       ],
       child: const MyApp(),
     ),
@@ -37,3 +37,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+

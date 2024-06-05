@@ -1,41 +1,44 @@
+import 'dart:js';
+
 import 'package:crob_project/pages/cadastro.dart';
+import 'package:crob_project/pages/campus.dart';
 import 'package:crob_project/pages/dados.dart';
 import 'package:crob_project/pages/dashboard.dart';
+import 'package:crob_project/pages/disciplinas.dart';
 import 'package:crob_project/pages/login.dart';
 import 'package:crob_project/pages/splashscreen.dart';
-import 'package:crob_project/pages_adm/dashboard_adm.dart';
-import 'package:crob_project/pages_adm/material_upload.dart';
-import 'package:crob_project/services/midia_service.dart';
 import 'package:go_router/go_router.dart';
 
 final routes = GoRouter(
   initialLocation: '/login', 
   routes: [
     GoRoute(
-      path: '/splash',
+      path: '/',
       builder: (context, state) => const SplashScreen(),
     ),
     GoRoute(
       path: '/login',
-      builder: (context, state) => LoginCrob(),
+      builder: (context, state) => LoginAcessibility(),
     ),
     GoRoute(
       path: '/cadastro',
       builder: (context, state) => const Cadastro(),
     ),
     GoRoute(
+      path: '/campus',
+      builder: (context, state) => const Campus(),
+    ),
+    GoRoute(
       path: '/dashboard',
       builder: (context, state) => const DashBoard(),
     ),
-    GoRoute(
-      path: '/dashboardadm',
-      builder: (context, state) => const DashBoardAdm(),
+     GoRoute(
+      path: '/disciplinas',
+      builder: (context, state) => const Disciplinas(),
     ),
      GoRoute(path: '/dados',
     builder: (context, state) =>  const DadosCadastrais(),
     ),
-     GoRoute(path: '/upload',
-    builder: (context, state) =>  const Upload(),
-    ),
+  
   ],
 );

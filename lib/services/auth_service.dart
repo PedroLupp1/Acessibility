@@ -2,38 +2,65 @@ import 'package:crob_project/main.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class AuthException implements Exception {
-  String message;
-  AuthException(this.message);
-}
-
 class AuthService extends ChangeNotifier {
   final SupabaseClient _supabaseClient = SupabaseClient(
-    'https://ojysjtnqtdiosnarcfxm.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qeXNqdG5xdGRpb3NuYXJjZnhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTQ2MjU3MjksImV4cCI6MjAxMDIwMTcyOX0.pfELcLPTN0-OgrsCVcXQ27NfhHiH6SsS1aDxtwoHDSM',
+    'https://ypghmjnccbtkknqokvun.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwZ2htam5jY2J0a2tucW9rdnVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTczODg2ODMsImV4cCI6MjAzMjk2NDY4M30.cAlDkP1f22TW0pffwpKFLCty-0DBcfCDaMKFhnY0wkI',
     schema: 'public',
   );
 
-  User? usuario;
+
+  User? _currentUser;
+  User? get currentUser => _currentUser;
   bool isLoading = true;
 
+
+
   AuthService() {
-    _authCheck();
+    _initialize();
   }
 
-  Future<void> _authCheck() async {
+  Future<void> _initialize() async {
+  try {
+     _supabaseClient.auth.onAuthStateChange.listen((_) {
+      getUser(); 
+    });
+    isLoading = false;
+    notifyListeners();
+  } catch (e) {
+    throw AuthException('Erro ao verificar o estado de autenticação: $e');
+  }
+}
+ Future<void> login(String email, String senha) async {
+  try {
+    await _supabaseClient.auth.signInWithPassword(
+      email: email,
+      password: senha,
+    );
+
+    getUser();
+  } catch (e) {
+    throw AuthException('Erro durante o login: $e');
+  }
+}
+
+
+  Future<void> logout() async {
     try {
-      await _supabaseClient.auth.onAuthStateChange.listen((_) {
-        _getUser();
-      });
-      isLoading = false;
-      notifyListeners();
+      await _supabaseClient.auth.signOut();
+
     } catch (e) {
-      throw AuthException('Erro ao verificar o estado de autenticação: $e');
+      throw AuthException('Erro durante o logout: $e');
     }
   }
 
-  Future<User?> cadastrar(String email, String senha, String nome, String local) async {
+  Future<void> getUser() async {
+    _currentUser = _supabaseClient.auth.currentUser;
+    notifyListeners();
+  }
+
+
+   Future<User?> cadastrar(String email, String senha, String nome) async {
   try {
     final AuthResponse res = await _supabaseClient.auth.signUp(
       email: email,
@@ -53,7 +80,6 @@ class AuthService extends ChangeNotifier {
           'senha': senha,
           'role': 'user_comum',
           'nome': nome,
-          'local': local,
         },
       ]).execute();
     }
@@ -63,31 +89,7 @@ class AuthService extends ChangeNotifier {
     throw AuthException('Erro durante o cadastro: $e');
   }
 }
-
-
-  Future<void> login(String email, String senha) async {
-    try {
-      await _supabaseClient.auth.signInWithPassword(
-        email: email,
-        password: senha,
-      );
-    } catch (e) {
-      throw AuthException('Erro durante o login. Tente novamente mais tarde.');
-    }
-  }
-
-  Future<void> logout() async {
-    try {
-      await _supabaseClient.auth.signOut();
-    } catch (e) {
-      throw AuthException('Erro durante o logout. Tente novamente mais tarde.');
-    }
-  }
-
-  Future<void> _getUser() async {
-    usuario = _supabaseClient.auth.currentUser;
-    notifyListeners();
-  }
+ 
 
 Future<String?> getUserRole() async {
   try {
@@ -100,15 +102,15 @@ Future<String?> getUserRole() async {
           .select('role')
           .eq('id', userId) 
           .execute();
-          print(userId);
-          print(response.data);
+          print(_currentUser);
+         
+        
 
       if (response.data != null && response.data.isNotEmpty) {
         dynamic role = response.data[0]['role'];
-        print(response.data);
-        print('role');
+ 
 
-        if (role is String && (role == 'user_comum' || role == 'admin')) {
+        if (role is String && (role == 'user_comum' || role == 'admin' || role == 'ger')) {
           return role;
         }
       }
@@ -119,13 +121,22 @@ Future<String?> getUserRole() async {
 
   return 'user_comum';
 }
-
-
-
-
-  Future<String?> getUserUid() async {
-    final user = _supabaseClient.auth.currentUser;
-    return user?.id.toString();
+ String? getUserUid() {
+  try {
+    final usuario = currentUser!.id.toString(); 
+    if (usuario != null) {
+      getUser();
+      return usuario;   
+    }
+  } catch (e) {
+    print('erro: $e');
   }
+  return null; 
+}
+
+User? userState(){
+   return _currentUser;
+}
+
 
 }
