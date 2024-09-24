@@ -153,7 +153,7 @@ class _DashBoardState extends State<DashBoard> {
                       margin: const EdgeInsets.all(10),
                       width: MediaQuery.of(context).size.width * 0.5,
                       child: Image.asset(
-                        'images/mapa.png',
+                        'images/mapa-campus.png',
                         fit: BoxFit.cover,
                       )),
                 ),

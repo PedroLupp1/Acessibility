@@ -155,7 +155,7 @@ Future<String> getSenhaUser() async {
                         ),
                         child: const Text(
                           "Não possui uma conta? Cadastre-se!",
-                          style: TextStyle(),
+                          style: TextStyle(color: config.Colors.primary2),
                         ),
                       ),
                       const SizedBox(
